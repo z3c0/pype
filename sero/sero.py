@@ -15,6 +15,8 @@ def parameterize(step, *params):
         def wrapper_func():
             return step(*params)
 
+        wrapper_func.__name__ = 'parameterized_' + step.__name__
+
         return wrapper_func
     else:
         raise Exception('step must be callable')
@@ -28,7 +30,7 @@ class Pipeline:
     def execute(self, verbose=False):
         for step_num, (step, action) in enumerate(self._steps.items()):
             if verbose:
-                self._log(step)
+                self._log(f'Beginning {step}')
 
             if callable(action):
                 action()
@@ -50,7 +52,7 @@ class Pipeline:
                 try:
                     queued_step = q.get()
                     if callable(queued_step):
-                        self._log(f'executing {queued_step.__name__}')
+                        self._log(f'Executing {queued_step.__name__}')
                         queued_step()
                     elif isinstance(queued_step, int):
                         self._log(f'Waiting for {queued_step} seconds...')
