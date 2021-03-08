@@ -1,6 +1,6 @@
 from os import path as _path
 
-from concurrent.concurrent import Pipeline, parameterize
+from sero.sero import Pipeline, parameterize
 
 __all__ = ['Pipeline', 'parameterize']
 
