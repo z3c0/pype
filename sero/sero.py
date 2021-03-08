@@ -37,12 +37,12 @@ class Pipeline:
             elif isinstance(action, int):
                 time.sleep(action)
             elif isinstance(action, list):
-                self._run_actions(action)
+                self._run_actions(action, verbose)
 
     def _log(self, text):
         self._logging_func(f'[{dt.datetime.now()}]: {text}')
 
-    def _run_actions(self, steps):
+    def _run_actions(self, steps, verbose):
 
         exit_system = False
         still_threading = True
@@ -52,13 +52,16 @@ class Pipeline:
                 try:
                     queued_step = q.get()
                     if callable(queued_step):
-                        self._log(f'Executing {queued_step.__name__}')
+                        if verbose:
+                            self._log(f'Executing {queued_step.__name__}')
                         queued_step()
                     elif isinstance(queued_step, int):
-                        self._log(f'Waiting for {queued_step} seconds...')
+                        if verbose:
+                            self._log(f'Waiting for {queued_step} seconds...')
                         time.sleep(queued_step)
                 except Exception as e:
-                    self._log(e.with_traceback())
+                    if verbose:
+                        self._log(e.with_traceback())
                     raise
                 finally:
                     q.task_done()
@@ -76,7 +79,8 @@ class Pipeline:
         except KeyboardInterrupt:
             exit_system = True
         except Exception as e:
-            self._log(e.with_traceback())
+            if verbose:
+                self._log(e.with_traceback())
             raise
         finally:
             still_threading = False
