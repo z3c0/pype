@@ -35,7 +35,7 @@ class Pipeline:
             elif isinstance(action, int):
                 time.sleep(action)
             elif isinstance(action, list):
-                Pipeline._run_actions(action)
+                self._run_actions(action)
 
     def _log(self, text):
         self._logging_func(f'[{dt.datetime.now()}]: {text}')
